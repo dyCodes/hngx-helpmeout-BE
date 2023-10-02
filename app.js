@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Routes
-app.get("/", (req, res) => res.send("HNGx Stage 5 task [dyCodes]"));
+app.get("/", (req, res) => res.send("HNGx Stage 5 task"));
 app.post("/api/upload", videoController.uploadVideo);
 app.get("/api/video/:id", videoController.getVideo);
 app.get("/api/videos", videoController.getAllVideos);

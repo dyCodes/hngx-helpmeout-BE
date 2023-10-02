@@ -21,9 +21,6 @@ exports.uploadVideo = (req, res) => {
 
 		req.busboy.on("file", (fieldName, file, { filename, encoding, mimeType }) => {
 			console.log("uploading file:", fieldName, filename, encoding, mimeType);
-			// if (fieldName !== "video") {
-			// 	return res.status(400).json({ error: "video field is required" });
-			// }
 
 			// Check file type
 			if (!mimeType.startsWith("video")) {
@@ -45,11 +42,14 @@ exports.uploadVideo = (req, res) => {
 				const videoURL = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
 				console.log("Video saved successfully", videoURL);
 
+				// Transcribe video
+				const transcript = await transcribeVideo(path.join(uploadsDir, filename));
+
 				// Save video to database
 				const newVideo = new Video({
 					name: filename,
 					url: videoURL,
-					transcript: "",
+					transcript: transcript,
 				});
 				const video = await newVideo.save().catch((err) => console.error(err));
 				if (video) {
@@ -79,4 +79,5 @@ exports.getAllVideos = async (req, res, next) => {
 
 const transcribeVideo = async (video) => {
 	// Todo: Transcribe video
+	return "This is a sample transcript";
 };
