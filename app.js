@@ -24,10 +24,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Routes
-app.get("/", (req, res) => res.send("HNGx Stage 5 task"));
-app.post("/api/upload", videoController.uploadVideo);
+app.get("/", (req, res) => res.send({ message: "HNGx Stage 5 task" }));
 app.get("/api/video/:id", videoController.getVideo);
+app.post("/api/upload", videoController.uploadVideo);
 app.get("/api/videos", videoController.getAllVideos);
+app.delete("/api/video/:id", videoController.deleteVideo);
 
 // Export app
 module.exports = app;

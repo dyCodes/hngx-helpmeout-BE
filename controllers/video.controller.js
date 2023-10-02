@@ -77,6 +77,23 @@ exports.getAllVideos = async (req, res, next) => {
 	} else return next(res.status(404).json({ error: "No videos found" }));
 };
 
+// Delete video
+exports.deleteVideo = async (req, res, next) => {
+	const id = req.params.id;
+	const video = await Video.findById(id).catch((err) => console.error(err));
+	if (video) {
+		// Delete video from database
+		await Video.deleteOne({ _id: id }).catch((err) => console.error(err));
+		// Delete video from disk
+		const uploadsDir = path.join(__dirname, "..", "uploads");
+		fs.unlinkSync(path.join(uploadsDir, video.name));
+		return next(res.status(200).json({ message: "Video deleted successfully" }));
+	} else {
+		return next(res.status(404).json({ error: "Video not found" }));
+	}
+};
+
+/* Helper functions */
 const transcribeVideo = async (video) => {
 	// Todo: Transcribe video
 	return "This is a sample transcript";
