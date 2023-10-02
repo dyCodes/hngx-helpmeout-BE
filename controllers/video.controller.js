@@ -76,3 +76,7 @@ exports.getAllVideos = async (req, res, next) => {
 		return next(res.status(200).json(videos));
 	} else return next(res.status(404).json({ error: "No videos found" }));
 };
+
+const transcribeVideo = async (video) => {
+	// Todo: Transcribe video
+};

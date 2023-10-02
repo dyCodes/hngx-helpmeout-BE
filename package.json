@@ -14,6 +14,7 @@
     "url": "dycodes51@gmail.com"
   },
   "dependencies": {
+    "@deepgram/sdk": "^2.4.0",
     "body-parser": "^1.20.2",
     "connect-busboy": "^1.0.0",
     "cors": "^2.8.5",
