@@ -1,25 +1,28 @@
 {
-  "name": "hngx-helpmeout-api",
-  "version": "1.0.0",
-  "description": "Backend for HelpMeOut Chrome Extension",
-  "main": "server.js",
-  "scripts": {
-    "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "dycodes51@gmail.com"
-  },
-  "dependencies": {
-    "@deepgram/sdk": "^2.4.0",
-    "body-parser": "^1.20.2",
-    "connect-busboy": "^1.0.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "mongoose": "^7.5.3"
-  }
+	"name": "hngx-helpmeout-api",
+	"version": "1.0.0",
+	"description": "Backend for HelpMeOut Chrome Extension",
+	"main": "server.js",
+	"scripts": {
+		"start": "nodemon server.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"engines": {
+		"node": ">=14.20.1"
+	},
+	"author": "",
+	"license": "ISC",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dyCodes/hngx-helpmeout-BE"
+	},
+	"dependencies": {
+		"@deepgram/sdk": "^2.4.0",
+		"body-parser": "^1.20.2",
+		"connect-busboy": "^1.0.0",
+		"cors": "^2.8.5",
+		"dotenv": "^16.3.1",
+		"express": "^4.18.2",
+		"mongoose": "^7.5.3"
+	}
 }
