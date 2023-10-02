@@ -1,26 +1,33 @@
 const express = require("express");
-const app = express();
-const mongoose = require("mongoose");
-const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 const bodyParser = require("body-parser");
-const { getAllVideos, getVideo, saveVideo } = require("./controllers/video.controller");
+const busboy = require("connect-busboy");
+const cors = require("cors");
 require("dotenv/config");
+const videoController = require("./controllers/video.controller");
+const app = express();
 
 // Connect to DB
-mongoose.connect(process.env.MONGODB_CONNECTION, { useNewUrlParser: true });
-mongoose.connection.on("connected", () => console.log("Connected to database"));
-mongoose.connection.on("error", (err) => console.error(err));
+require("./config/database");
+
+// Check if uploads directory exists
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir);
+// Serve static files
+app.use("/uploads", express.static(uploadsDir));
 
 // Middlewares
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(busboy());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Routes
 app.get("/", (req, res) => res.send("HNGx Stage 5 task [dyCodes]"));
-app.post("/api/upload", saveVideo);
-app.get("/api/video/:id", getVideo);
-app.get("/api/videos", getAllVideos);
+app.post("/api/upload", videoController.uploadVideo);
+app.get("/api/video/:id", videoController.getVideo);
+app.get("/api/videos", videoController.getAllVideos);
 
 // Export app
 module.exports = app;
