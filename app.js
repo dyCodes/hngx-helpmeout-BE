@@ -18,6 +18,9 @@ app.use(bodyParser.json());
 
 // Routes
 app.get("/", (req, res) => res.send("HNGx Stage 5 task [dyCodes]"));
+app.post("/api/upload", saveVideo);
+app.get("/api/video/:id", getVideo);
+app.get("/api/videos", getAllVideos);
 
 // Export app
 module.exports = app;
