@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const { Video } = require("../model/video.model");
+const { Deepgram } = require("@deepgram/sdk");
+require("dotenv/config");
+const uploadsDir = path.join(__dirname, "..", "uploads");
 
 // Get video by id
 exports.getVideo = async (req, res, next) => {
@@ -31,7 +34,6 @@ exports.uploadVideo = (req, res) => {
 			const extension = filename.split(".").pop();
 			filename = `video_${Date.now()}.${extension}`;
 			// Create a writable stream to save the uploaded file
-			const uploadsDir = path.join(__dirname, "..", "uploads");
 			const writeStream = fs.createWriteStream(path.join(uploadsDir, filename));
 
 			// Pipe the file to the write stream
@@ -41,15 +43,11 @@ exports.uploadVideo = (req, res) => {
 			writeStream.on("finish", async () => {
 				const videoURL = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
 				console.log("Video saved successfully", videoURL);
-
-				// Transcribe video
-				const transcript = await transcribeVideo(path.join(uploadsDir, filename));
-
 				// Save video to database
 				const newVideo = new Video({
 					name: filename,
 					url: videoURL,
-					transcript: transcript,
+					transcript: "",
 				});
 				const video = await newVideo.save().catch((err) => console.error(err));
 				if (video) {
@@ -65,7 +63,30 @@ exports.uploadVideo = (req, res) => {
 			});
 		});
 	} else {
-		res.status(400).json({ error: "Expected multipart/form-data" });
+		res.status(400).json({ error: "Invalid request! No file uploaded" });
+	}
+};
+
+exports.transcribeVideo = async (req, res, next) => {
+	const id = req.params.id;
+	const video = await Video.findById(id).catch((err) => console.error(err));
+	if (video) {
+		// Check if video has been transcribed
+		if (video.transcript) {
+			return res.status(200).json({
+				message: "Video transcription successful",
+				transcript: video.transcript,
+			});
+		} else {
+			// Transcribe video
+			const transcript = await transcribeVideoFile(path.join(uploadsDir, video.name));
+			// Update video transcript in database
+			video.transcript = transcript;
+			await video.save().catch((err) => console.error(err));
+			return res.status(200).json({ message: "Video transcription successful", transcript });
+		}
+	} else {
+		return res.status(404).json({ error: "Video not found" });
 	}
 };
 
@@ -94,7 +115,13 @@ exports.deleteVideo = async (req, res, next) => {
 };
 
 /* Helper functions */
-const transcribeVideo = async (video) => {
-	// Todo: Transcribe video
-	return "This is a sample transcript";
+const transcribeVideoFile = async (videoPath) => {
+	const mimeType = `video/${videoPath.split(".").pop()}`;
+	// Transcribe video using Deepgram
+	const deepgram = new Deepgram(process.env.DEEPGRAM_API_KEY);
+	const response = await deepgram.transcription.preRecorded({
+		stream: fs.createReadStream(videoPath),
+		mimetype: mimeType,
+	});
+	return response.results.channels[0].alternatives[0].transcript;
 };

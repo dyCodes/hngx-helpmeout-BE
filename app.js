@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => res.send({ message: "HNGx Stage 5 task" }));
 app.get("/api/video/:id", videoController.getVideo);
 app.post("/api/upload", videoController.uploadVideo);
+app.get("/api/transcribe/:id", videoController.transcribeVideo);
 app.get("/api/videos", videoController.getAllVideos);
 app.delete("/api/video/:id", videoController.deleteVideo);
 
